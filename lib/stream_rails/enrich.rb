@@ -39,7 +39,7 @@ module StreamRails
       if !field_value.respond_to?("split")
         return false
       end
-      bits = field_value.split(':')
+      bits = field_value.split(/(?<!:):(?!:)/)
       if bits.length < 2
         return false
       end
@@ -76,7 +76,7 @@ module StreamRails
       activities.each do |activity|
         activity.select{|k,v| @fields.include? k.to_sym}.each do |field, value|
           next unless self.model_field?(value)
-          model, id = value.split(':')
+          model, id = value.split(/(?<!:):(?!:)/)
           model_refs[model][id] = 0
         end
       end
@@ -92,7 +92,7 @@ module StreamRails
       activities.each do |activity|
         activity.select{|k,v| @fields.include? k.to_sym}.each do |field, value|
           next unless self.model_field?(value)
-          model, id = value.split(':')
+          model, id = value.split(/(?<!:):(?!:)/)
           activity[field] = objects[model][id] || value
           if objects[model][id].nil?
             activity.track_not_enriched_field(field, value)
